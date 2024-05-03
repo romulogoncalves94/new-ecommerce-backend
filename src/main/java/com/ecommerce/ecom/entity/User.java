@@ -1,9 +1,8 @@
 package com.ecommerce.ecom.entity;
 
+import com.ecommerce.ecom.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Entity
 @Data
@@ -14,6 +13,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
+    private String name;
     private String password;
     private UserRole role;
 
