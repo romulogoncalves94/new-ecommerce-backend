@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
@@ -26,7 +27,11 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
+
+    @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
     private AuthService authService;
 
     private final String HEADER_STRING = "Authorization";
@@ -56,7 +61,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signupUser(SignupRequestDTO requestDTO) {
+    public ResponseEntity<?> signupUser(@RequestBody SignupRequestDTO requestDTO) {
         if (authService.hasUserWithEmail(requestDTO.getEmail())) {
             return new ResponseEntity<>("User already exists", HttpStatus.NOT_ACCEPTABLE);
         }

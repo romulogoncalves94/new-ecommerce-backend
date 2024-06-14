@@ -18,7 +18,7 @@ public class User {
     private UserRole role;
 
     @Lob
-    @Column(columnDefinition = "bytea")
+    @Column(columnDefinition = "longblob")
     private byte[] img;
 
 }
