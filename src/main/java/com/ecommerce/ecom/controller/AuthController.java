@@ -24,8 +24,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthController {
 
+    @Autowired
     private final AuthenticationManager authenticationManager;
+
+    @Autowired
     private final UserDetailsService userDetailsService;
+
+    @Autowired
     private final UserRepository userRepository;
 
     @Autowired
@@ -40,12 +45,12 @@ public class AuthController {
     @PostMapping("/authenticate")
     public void createAuthenticationToken(@RequestBody AuthenticationRequestDTO requestDTO, HttpServletResponse response) throws IOException, JSONException {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDTO.getUserName(), requestDTO.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDTO.getUsername(), requestDTO.getPassword()));
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Incorrect username or password");
         }
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(requestDTO.getUserName());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(requestDTO.getUsername());
         Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
@@ -56,6 +61,8 @@ public class AuthController {
                     .toString()
             );
 
+            response.addHeader("Access-Control-Expose-Headers", "Authorization");
+            response.addHeader("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER. Origin, X-Requested-With, Content-Type, Accept, X-Custom-header");
             response.addHeader(HEADER_STRING, TOKEN_PREFIX + jwt);
         }
     }

@@ -32,7 +32,7 @@ public class JwtUtil {
     }
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = SECRET.getBytes();;
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
