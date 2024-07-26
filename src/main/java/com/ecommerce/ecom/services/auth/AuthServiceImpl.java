@@ -41,18 +41,18 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.findFirstByEmail(email).isPresent();
     }
 
-    @PostConstruct
-    public void createAdminAccount() {
-        User userAdmin = userRepository.findByRole(UserRole.ADMIN);
-
-        if (nonNull(userAdmin)) {
-            User user = new User();
-            user.setEmail("admin@admin");
-            user.setName("admin");
-            user.setRole(UserRole.ADMIN);
-            user.setPassword(new BCryptPasswordEncoder().encode("admin"));
-            userRepository.save(user);
-        }
-    }
+//    @PostConstruct
+//    public void createAdminAccount() {
+//        User userAdmin = userRepository.findByRole(UserRole.ADMIN);
+//
+//        if (nonNull(userAdmin)) {
+//            User user = new User();
+//            user.setEmail("admin@admin");
+//            user.setName("admin");
+//            user.setRole(UserRole.ADMIN);
+//            user.setPassword(new BCryptPasswordEncoder().encode("admin"));
+//            userRepository.save(user);
+//        }
+//    }
 
 }
