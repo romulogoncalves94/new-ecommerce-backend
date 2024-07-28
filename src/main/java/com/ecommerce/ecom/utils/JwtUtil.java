@@ -11,11 +11,13 @@ import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
 
+import static org.springframework.security.config.Elements.JWT;
+
 @Component
 public class JwtUtil {
 
-    public static final String SECRET = "pln6gg-g06diu-xcy0d#&^zilv@$9dex97#e#9^u8c4&zy+^_b";
-    private static final Integer TIME = 10000 * 60 * 30;
+    public static final String SECRET = "9faa372517ac1d389758d3750fc07acf00f542277f26fec1ce4593e93f64e338";
+    private static final Integer TIME = 1000 * 60 * 30;
 
     public String generateToken(String userName) {
         Map<String, Object> claims = new HashMap<>();
@@ -33,7 +35,7 @@ public class JwtUtil {
     }
 
     private Key getSignKey() {
-        byte[] keyBytes = SECRET.getBytes();;
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -50,7 +52,7 @@ public class JwtUtil {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 
@@ -63,7 +65,7 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        String username = extractUserName(token);
+        final String username = extractUserName(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpiration(token));
     }
 }

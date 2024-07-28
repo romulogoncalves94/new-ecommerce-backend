@@ -21,7 +21,6 @@ public class WebSecurityConfiguration {
 
     private final JwtRequestFilter filter;
 
-    //Refatorar e atualizar métodos para nova forma
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http

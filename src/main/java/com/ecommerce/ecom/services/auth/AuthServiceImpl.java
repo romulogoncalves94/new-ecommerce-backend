@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static java.util.Objects.nonNull;
+import static java.util.Objects.isNull;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -41,18 +41,18 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.findFirstByEmail(email).isPresent();
     }
 
-//    @PostConstruct
-//    public void createAdminAccount() {
-//        User userAdmin = userRepository.findByRole(UserRole.ADMIN);
-//
-//        if (nonNull(userAdmin)) {
-//            User user = new User();
-//            user.setEmail("admin@admin");
-//            user.setName("admin");
-//            user.setRole(UserRole.ADMIN);
-//            user.setPassword(new BCryptPasswordEncoder().encode("admin"));
-//            userRepository.save(user);
-//        }
-//    }
+    @PostConstruct
+    public void createAdminAccount() {
+        User userAdmin = userRepository.findByRole(UserRole.ADMIN);
+
+        if (isNull(userAdmin)) {
+            User user = new User();
+            user.setEmail("admin@admin");
+            user.setName("admin");
+            user.setRole(UserRole.ADMIN);
+            user.setPassword(new BCryptPasswordEncoder().encode("admin"));
+            userRepository.save(user);
+        }
+    }
 
 }
