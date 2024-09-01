@@ -12,6 +12,7 @@ public class ProductDTO {
     private Long price;
     private byte[] byteImg;
     private Long categoryId;
+    private String categoryName;
     private MultipartFile img;
 
 }
