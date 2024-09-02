@@ -29,4 +29,5 @@ public class AdminCategoryController {
     public ResponseEntity<List<Category>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
+
 }

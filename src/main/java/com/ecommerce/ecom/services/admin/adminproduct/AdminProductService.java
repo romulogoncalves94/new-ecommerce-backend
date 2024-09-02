@@ -11,4 +11,5 @@ public interface AdminProductService {
     List<ProductDTO> getAllProduct();
     List<ProductDTO> getAllProductByName(String name);
     boolean deleteProduct(Long id);
+
 }

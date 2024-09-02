@@ -47,4 +47,5 @@ public class AdminProductController {
 
         return ResponseEntity.notFound().build();
     }
+
 }
