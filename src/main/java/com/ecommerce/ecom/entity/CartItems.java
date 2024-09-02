@@ -1,5 +1,8 @@
 package com.ecommerce.ecom.entity;
 
+import com.ecommerce.ecom.dto.CartItemsDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
@@ -25,7 +28,21 @@ public class CartItems {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private Order order;
+
+    public CartItemsDTO getCartItemsDTO() {
+        CartItemsDTO cartItemsDTO = new CartItemsDTO();
+        cartItemsDTO.setId(id);
+        cartItemsDTO.setPrice(price);
+        cartItemsDTO.setProductId(product.getId());
+        cartItemsDTO.setQuantity(quantity);
+        cartItemsDTO.setUserId(user.getId());
+        cartItemsDTO.setProductName(product.getName());
+        cartItemsDTO.setReturnedImg(product.getImg());
+        return cartItemsDTO;
+    }
+
 }

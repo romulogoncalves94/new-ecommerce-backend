@@ -1,6 +1,6 @@
 package com.ecommerce.ecom.services.customer.cart;
 
-import com.ecommerce.ecom.dto.AddProductInCarDTO;
+import com.ecommerce.ecom.dto.*;
 import com.ecommerce.ecom.entity.*;
 import com.ecommerce.ecom.enums.OrderStatus;
 import com.ecommerce.ecom.repository.*;
@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,7 +31,8 @@ public class CartServiceImpl implements CartService {
 
     public ResponseEntity<?> addProductToCart(AddProductInCarDTO inCarDTO) {
         Order activeOrder = orderRepository.findByUserIdAndOrderStatus(inCarDTO.getUserId(), OrderStatus.Pending);
-        Optional<CartItems> optionalCartItems = cartItemsRepository.findByProductIdAndOrderIdAndUser(inCarDTO.getProductId(), activeOrder.getId(), inCarDTO.getUserId());
+        Optional<CartItems> optionalCartItems = cartItemsRepository.findByProductIdAndOrderIdAndUserId
+                (inCarDTO.getProductId(), activeOrder.getId(), inCarDTO.getUserId());
 
         if (optionalCartItems.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
@@ -50,15 +52,28 @@ public class CartServiceImpl implements CartService {
 
                 activeOrder.setTotalAmount(activeOrder.getTotalAmount() + cartItems.getPrice());
                 activeOrder.setAmount(activeOrder.getAmount() + cartItems.getPrice());
+                activeOrder.getCartItems().add(cartItems);
                 orderRepository.save(activeOrder);
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(cartItems);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or product not found");
             }
-
-
         }
+    }
 
+    public OrderDTO getCartByUserId(Long userId) {
+        Order activeOrder = orderRepository.findByUserIdAndOrderStatus(userId, OrderStatus.Pending);
+        List<CartItemsDTO> cartItemsDTO = activeOrder.getCartItems().stream().map(CartItems::getCartItemsDTO).toList();
+
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setAmount(activeOrder.getAmount());
+        orderDTO.setId(activeOrder.getId());
+        orderDTO.setOrderStatus(activeOrder.getOrderStatus());
+        orderDTO.setDiscount(activeOrder.getDiscount());
+        orderDTO.setTotalAmount(activeOrder.getTotalAmount());
+        orderDTO.setCartItems(cartItemsDTO);
+
+        return orderDTO;
     }
 }
