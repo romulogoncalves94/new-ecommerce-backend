@@ -18,7 +18,7 @@ public class AdminCouponController {
     private final AdminCouponService adminCouponService;
 
     @PostMapping
-    public ResponseEntity<?> createCoupon(Coupon coupon) {
+    public ResponseEntity<?> createCoupon(@RequestBody Coupon coupon) {
         try {
             Coupon createdCoupon = adminCouponService.createCoupon(coupon);
             return ResponseEntity.ok(createdCoupon);
