@@ -109,4 +109,35 @@ public class CartServiceImpl implements CartService {
 
         return expirationDate != null && currentDate.after(expirationDate);
     }
+
+    public OrderDTO increaseProductQuantity(AddProductInCartDTO product) {
+        Order activeOrder = orderRepository.findByUserIdAndOrderStatus(product.getUserId(), OrderStatus.Pending);
+        Optional<Product> optionalProduct = productRepository.findById(product.getProductId());
+
+        Optional<CartItems> optionalCartItems = cartItemsRepository.findByProductIdAndOrderIdAndUserId(product.getProductId(), activeOrder.getId(), product.getUserId());
+
+        if (optionalProduct.isPresent() && optionalCartItems.isPresent()) {
+            CartItems cartItems = optionalCartItems.get();
+            Product product1 = optionalProduct.get();
+
+            activeOrder.setAmount(activeOrder.getAmount() + product1.getPrice());
+            activeOrder.setTotalAmount(activeOrder.getTotalAmount() + product1.getPrice());
+
+            cartItems.setQuantity(cartItems.getQuantity() + 1);
+
+            if (activeOrder.getCoupon() != null) {
+                double discountAmount = ((activeOrder.getCoupon().getDiscount() / 100.0) * activeOrder.getTotalAmount());
+                double netAmount = activeOrder.getTotalAmount() - discountAmount;
+
+                activeOrder.setAmount((long) netAmount);
+                activeOrder.setDiscount((long) discountAmount);
+            }
+
+            cartItemsRepository.save(cartItems);
+            orderRepository.save(activeOrder);
+            return activeOrder.getOrderDto();
+        }
+
+        return null;
+    }
 }
