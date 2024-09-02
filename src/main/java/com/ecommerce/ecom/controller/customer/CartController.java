@@ -1,6 +1,6 @@
 package com.ecommerce.ecom.controller.customer;
 
-import com.ecommerce.ecom.dto.AddProductInCarDTO;
+import com.ecommerce.ecom.dto.AddProductInCartDTO;
 import com.ecommerce.ecom.dto.OrderDTO;
 import com.ecommerce.ecom.services.customer.cart.CartService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping("/cart")
-    public ResponseEntity<?> addProductToCart(@RequestBody AddProductInCarDTO inCarDTO) {
+    public ResponseEntity<?> addProductToCart(@RequestBody AddProductInCartDTO inCarDTO) {
         return cartService.addProductToCart(inCarDTO);
     }
 
