@@ -140,4 +140,63 @@ public class CartServiceImpl implements CartService {
 
         return null;
     }
+
+    public OrderDTO decreaseProductQuantity(AddProductInCartDTO product) {
+        Order activeOrder = orderRepository.findByUserIdAndOrderStatus(product.getUserId(), OrderStatus.Pending);
+        Optional<Product> optionalProduct = productRepository.findById(product.getProductId());
+
+        Optional<CartItems> optionalCartItems = cartItemsRepository.findByProductIdAndOrderIdAndUserId(product.getProductId(), activeOrder.getId(), product.getUserId());
+
+        if (optionalProduct.isPresent() && optionalCartItems.isPresent()) {
+            CartItems cartItems = optionalCartItems.get();
+            Product product1 = optionalProduct.get();
+
+            activeOrder.setAmount(activeOrder.getAmount() - product1.getPrice());
+            activeOrder.setTotalAmount(activeOrder.getTotalAmount() - product1.getPrice());
+
+            cartItems.setQuantity(cartItems.getQuantity() - 1);
+
+            if (activeOrder.getCoupon() != null) {
+                double discountAmount = ((activeOrder.getCoupon().getDiscount() / 100.0) * activeOrder.getTotalAmount());
+                double netAmount = activeOrder.getTotalAmount() - discountAmount;
+
+                activeOrder.setAmount((long) netAmount);
+                activeOrder.setDiscount((long) discountAmount);
+            }
+
+            cartItemsRepository.save(cartItems);
+            orderRepository.save(activeOrder);
+            return activeOrder.getOrderDto();
+        }
+
+        return null;
+    }
+
+    public OrderDTO placeOrder(PlaceOrderDTO placeOrderDTO) {
+        Order activeOrder = orderRepository.findByUserIdAndOrderStatus(placeOrderDTO.getUserId(), OrderStatus.Pending);
+        Optional<User> optionalUser = userRepository.findById(placeOrderDTO.getUserId());
+
+        if (optionalUser.isPresent()) {
+            activeOrder.setOrderDescription(placeOrderDTO.getOrderDescription());
+            activeOrder.setAddress(placeOrderDTO.getAddress());
+            activeOrder.setDate(new Date());
+            activeOrder.setOrderStatus(OrderStatus.Placed);
+            activeOrder.setTrackingId(UUID.randomUUID());
+
+            orderRepository.save(activeOrder);
+
+            Order order = new Order();
+            order.setAmount(0L);
+            order.setTotalAmount(0L);
+            order.setDiscount(0L);
+            order.setUser(optionalUser.get());
+            order.setOrderStatus(OrderStatus.Pending);
+            orderRepository.save(order);
+
+            return activeOrder.getOrderDto();
+        }
+
+        return null;
+    }
+
 }
