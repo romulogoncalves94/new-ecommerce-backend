@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +54,29 @@ public class AdminProductServiceImpl implements AdminProductService {
         }
 
         return false;
+    }
+
+    public ProductDTO getProductById(Long productId) {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        return optionalProduct.map(Product::getDto).orElse(null);
+    }
+
+    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) throws IOException {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        Optional<Category> optionalCategory = categoryRepository.findById(productDTO.getCategoryId());
+
+        if (optionalProduct.isPresent() && optionalCategory.isPresent()) {
+            Product product = optionalProduct.get();
+            product.setName(productDTO.getName());
+            product.setPrice(productDTO.getPrice());
+            product.setDescription(productDTO.getDescription());
+            product.setCategory(optionalCategory.get());
+            if (Objects.nonNull(productDTO.getImg())) {
+                product.setImg(productDTO.getImg().getBytes());
+            }
+            return productRepository.save(product).getDto();
+        }
+        return null;
     }
 
 }

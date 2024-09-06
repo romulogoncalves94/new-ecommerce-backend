@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -53,6 +54,26 @@ public class AdminProductController {
     @PostMapping("/faq/{productId}")
     public ResponseEntity<FaqDTO> postFaq(@PathVariable Long productId, @RequestBody FaqDTO faqDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(faqService.postFaq(productId, faqDTO));
+    }
+
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long productId) {
+        ProductDTO productDTO = adminProductService.getProductById(productId);
+
+        if (Objects.nonNull(productDTO))
+            return ResponseEntity.ok(productDTO);
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/product/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long productId, @ModelAttribute ProductDTO productDTO) throws IOException {
+        ProductDTO updateProduct = adminProductService.updateProduct(productId, productDTO);
+
+        if (Objects.nonNull(updateProduct))
+            return ResponseEntity.ok(updateProduct);
+
+        return ResponseEntity.notFound().build();
     }
 
 }
