@@ -177,26 +177,25 @@ public class CartServiceImpl implements CartService {
         Optional<User> optionalUser = userRepository.findById(placeOrderDTO.getUserId());
 
         if (optionalUser.isPresent()) {
-            activeOrder.setOrderDescription(placeOrderDTO.getOrderDescription());
-            activeOrder.setAddress(placeOrderDTO.getAddress());
-            activeOrder.setDate(new Date());
-            activeOrder.setOrderStatus(OrderStatus.Placed);
-            activeOrder.setTrackingId(UUID.randomUUID());
-
-            orderRepository.save(activeOrder);
-
-            Order order = new Order();
-            order.setAmount(0L);
-            order.setTotalAmount(0L);
-            order.setDiscount(0L);
-            order.setUser(optionalUser.get());
-            order.setOrderStatus(OrderStatus.Pending);
-            orderRepository.save(order);
-
-            return activeOrder.getOrderDto();
+            if (Objects.nonNull(activeOrder)) {
+                activeOrder.setOrderDescription(placeOrderDTO.getOrderDescription());
+                activeOrder.setAddress(placeOrderDTO.getAddress());
+                activeOrder.setDate(new Date());
+                activeOrder.setOrderStatus(OrderStatus.Placed);
+                activeOrder.setTrackingId(UUID.randomUUID());
+                orderRepository.save(activeOrder);
+            } else {
+                Order newOrder = new Order();
+                newOrder.setAmount(0L);
+                newOrder.setTotalAmount(0L);
+                newOrder.setDiscount(0L);
+                newOrder.setUser(optionalUser.get());
+                newOrder.setOrderStatus(OrderStatus.Pending);
+                newOrder.setTrackingId(UUID.randomUUID());
+                orderRepository.save(newOrder);
+            }
         }
-
-        return null;
+        return activeOrder != null ? activeOrder.getOrderDto() : null;
     }
 
 }
