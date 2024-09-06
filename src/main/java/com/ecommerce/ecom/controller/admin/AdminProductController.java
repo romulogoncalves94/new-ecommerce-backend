@@ -1,9 +1,10 @@
 package com.ecommerce.ecom.controller.admin;
 
+import com.ecommerce.ecom.dto.FaqDTO;
 import com.ecommerce.ecom.dto.ProductDTO;
 import com.ecommerce.ecom.services.admin.adminproduct.AdminProductService;
+import com.ecommerce.ecom.services.admin.faq.FaqService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminProductController {
 
-    @Autowired
     private final AdminProductService adminProductService;
+    private final FaqService faqService;
+
 
     @PostMapping("/product")
     public ResponseEntity<ProductDTO> addProduct(@ModelAttribute ProductDTO productDTO) throws IOException {
@@ -46,6 +48,11 @@ public class AdminProductController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/faq/{productId}")
+    public ResponseEntity<FaqDTO> postFaq(@PathVariable Long productId, @RequestBody FaqDTO faqDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(faqService.postFaq(productId, faqDTO));
     }
 
 }
