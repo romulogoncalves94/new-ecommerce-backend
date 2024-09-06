@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/customer")
 @RequiredArgsConstructor
@@ -49,6 +51,11 @@ public class CartController {
     @PostMapping("/place-order")
     public ResponseEntity<OrderDTO> placeOrder(@RequestBody PlaceOrderDTO placeOrderDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cartService.placeOrder(placeOrderDTO));
+    }
+
+    @GetMapping("/myOrders/{userId}")
+    public ResponseEntity<List<OrderDTO>> getMyPlacedOrders(@PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.getMyPlacedOrders(userId));
     }
 
 }

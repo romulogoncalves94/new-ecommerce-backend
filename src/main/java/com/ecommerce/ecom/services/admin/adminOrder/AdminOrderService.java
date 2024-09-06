@@ -7,5 +7,6 @@ import java.util.List;
 public interface AdminOrderService {
 
     List<OrderDTO> getAllPlacedOrders();
+    OrderDTO changeOrderStatus(Long orderId, String status);
 
 }
