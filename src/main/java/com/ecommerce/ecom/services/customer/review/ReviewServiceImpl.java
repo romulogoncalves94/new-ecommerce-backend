@@ -1,13 +1,12 @@
 package com.ecommerce.ecom.services.customer.review;
 
-import com.ecommerce.ecom.dto.OrderedProductsResponseDTO;
-import com.ecommerce.ecom.dto.ProductDTO;
-import com.ecommerce.ecom.entity.CartItems;
-import com.ecommerce.ecom.entity.Order;
-import com.ecommerce.ecom.repository.OrderRepository;
+import com.ecommerce.ecom.dto.*;
+import com.ecommerce.ecom.entity.*;
+import com.ecommerce.ecom.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -15,6 +14,9 @@ import java.util.*;
 public class ReviewServiceImpl implements ReviewService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
 
     public OrderedProductsResponseDTO getOrderedProductsDetailsByOrderId(Long orderId) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
@@ -40,6 +42,23 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         return orderedProductsResponseDTO;
+    }
+
+    public ReviewDTO giveReview(ReviewDTO reviewDTO) throws IOException {
+        Optional<Product> optionalProduct = productRepository.findById(reviewDTO.getProductId());
+        Optional<User> optionalUser = userRepository.findById(reviewDTO.getUserId());
+
+        if (optionalProduct.isPresent() && optionalUser.isPresent()) {
+            Review review = new Review();
+            review.setRating(reviewDTO.getRating());
+            review.setDescription(reviewDTO.getDescription());
+            review.setProduct(optionalProduct.get());
+            review.setUser(optionalUser.get());
+            review.setImg(reviewDTO.getImg().getBytes());
+
+            return reviewRepository.save(review).getDTO();
+        }
+        return null;
     }
 
 }
