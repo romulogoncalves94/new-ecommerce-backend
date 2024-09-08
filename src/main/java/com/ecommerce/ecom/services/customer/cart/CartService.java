@@ -4,6 +4,7 @@ import com.ecommerce.ecom.dto.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CartService {
 
@@ -14,5 +15,6 @@ public interface CartService {
     OrderDTO decreaseProductQuantity(AddProductInCartDTO product);
     OrderDTO placeOrder(PlaceOrderDTO placeOrderDTO);
     List<OrderDTO> getMyPlacedOrders(Long userId);
+    OrderDTO searchOrderByTrackingID(UUID trackingId);
 
 }
