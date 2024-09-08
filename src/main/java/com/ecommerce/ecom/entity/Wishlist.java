@@ -1,5 +1,6 @@
 package com.ecommerce.ecom.entity;
 
+import com.ecommerce.ecom.dto.WishlistDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
@@ -22,5 +23,18 @@ public class Wishlist {
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+
+    public WishlistDTO getWishDTO() {
+        WishlistDTO wishlistDTO = new WishlistDTO();
+        wishlistDTO.setUserId(user.getId());
+        wishlistDTO.setProductId(product.getId());
+        wishlistDTO.setId(id);
+        wishlistDTO.setProductName(product.getName());
+        wishlistDTO.setProductDescription(product.getDescription());
+        wishlistDTO.setReturnedImg(product.getImg());
+        wishlistDTO.setPrice(product.getPrice());
+        return wishlistDTO;
+    }
 
 }
